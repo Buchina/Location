@@ -27,7 +27,6 @@ public class DialogAddLocation {
     private List<Place> places;
     private DatePicker dateEdit;
     private Font font = Font.font(16);
-    //    private ComboBox<Place> placeEdit;
     private TextField timeEdit;
     private Spinner<Integer> xEdit, yEdit;
     private GridPane root;
@@ -42,7 +41,6 @@ public class DialogAddLocation {
         root.setHgap(10);
         root.setVgap(10);
         createIdEdit();
-//        createPlaceEdit();
         createDateEdit();
         createTimeEdit();
         createXYEdit();
@@ -75,17 +73,6 @@ public class DialogAddLocation {
         idEdit = new TextField();
         root.add(idEdit, 1, 1);
     }
-
-//    private void createPlaceEdit() {
-//        Label place = new Label("Place:");
-//        place.setFont(font);
-//        root.add(place, 0, 2);
-//        placeEdit = new ComboBox<>();
-//        placeEdit.setStyle("-fx-font-size: 15 pt");
-//        placeEdit.getItems().addAll(places);
-//        placeEdit.setValue(places.get(0));
-//        root.add(placeEdit, 1, 2);
-//    }
 
     public void createDateEdit() {
         Label date = new Label("Date:");
@@ -158,7 +145,6 @@ public class DialogAddLocation {
                             if (!flagPlace) {
                                 i2.addAtListFrequency(date);
                             }
-//                            addAtFileNewInfo(date, user, i2);
                         }
                     }
                     if (!flagPlaceNull) {

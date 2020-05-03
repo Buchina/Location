@@ -1,6 +1,5 @@
 package listviewexample;
 
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -56,6 +55,7 @@ public class DialogForGraphic {
         btnOk.setOnAction((
                 ActionEvent e) -> {
             place = placeChoose.getValue();
+            GraphicWindow graphicWindow = new GraphicWindow(place);
         });
         Button btnCancel = new Button("Cancel");
         btnCancel.setFont(font);

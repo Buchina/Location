@@ -5,12 +5,9 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
@@ -25,14 +22,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
-import java.util.stream.Collectors;
 
 public class Main extends Application {
 
     private ObservableList<Organization> data = FXCollections.observableArrayList();
     private ObservableList<User> users = FXCollections.observableArrayList();
     private List<Place> places = new ArrayList<>();
-    private ListView<Organization> dataView;
     private ListView<User> userView;
     private ViewUser view = new ViewUser();
     private Font font = Font.font(18);
@@ -78,7 +73,7 @@ public class Main extends Application {
                         System.out.println("Error with error.txt");
                     }
                 } else {
-                    try {//(1)
+                    try {
                         boolean flagId = false;
                         boolean flagPlace = false;
                         boolean flagPlaceNull = false;
@@ -108,9 +103,9 @@ public class Main extends Application {
                                 }
                             }
                         }
-                        if (!flagId) {//(2)
+                        if (!flagId) {
                             User newUser = new User(Integer.parseInt(str[1]));
-                            for (Place i2 : places) {//(3)
+                            for (Place i2 : places) {
                                 if (i2.inThisPlace(Integer.parseInt(str[2]), Integer.parseInt(str[3]))) {//(4)
                                     flagPlaceNull = true;
                                     i2.addCount();
@@ -144,9 +139,6 @@ public class Main extends Application {
             System.out.println("Юзеры " + users.toString());
             System.out.println("Места " + places.toString());
 
-
-//            data.sort((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
-
         } catch (IOException e) {
             System.out.println("Error with init");  //????
         }
@@ -157,23 +149,11 @@ public class Main extends Application {
         BorderPane root = new BorderPane();
         root.setCenter(createListViewUser());
         root.setRight(view.getPane());
-//        root.setLeft(createButtons());
         root.setTop(createMenu());
         primaryStage.setTitle("List of users");
         primaryStage.setScene(new Scene(root, 700, 600));
-////        showBeginMessage();
         primaryStage.show();
-////        showBeginMessage();
     }
-
-//    private void showBeginMessage(){
-//        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-//        alert.setTitle("Hello");
-//        alert.setHeaderText(null);
-//        alert.setContentText(beginMessage);
-//        alert.getDialogPane().setStyle("-fx-font-size: 16px;");
-//        alert.showAndWait();
-//    }
 
     private ListView<User> createListViewUser() {
         userView = new ListView<>(users);
@@ -184,41 +164,6 @@ public class Main extends Application {
         return userView;
     }
 
-    private VBox createButtons() {
-        VBox boxButtons = new VBox();
-        boxButtons.setPadding(new Insets(10));
-        boxButtons.setSpacing(10);
-        boxButtons.setAlignment(Pos.CENTER);
-        Button filterBossName = new Button("Filter same boss");
-        filterBossName.setFont(font);
-        filterBossName.setOnAction((ActionEvent e) -> {
-            Organization org = dataView.getSelectionModel().getSelectedItem();
-            if (org != null) {
-                ObservableList<Organization> dataFilter = FXCollections.observableArrayList();
-                dataFilter.setAll(data.stream().filter(organization -> organization.isTheSameBoss(org)).collect(Collectors.toList()));
-                dataFilterView(dataFilter);
-            } else {
-                showMessage("No selected item!");
-            }
-        });
-        Button showBossName = new Button("Show same boss");
-        showBossName.setFont(font);
-        showBossName.setOnAction((ActionEvent e) -> {
-            Organization org = dataView.getSelectionModel().getSelectedItem();
-            if (org != null) {
-                ObservableList<Organization> dataShow = FXCollections.observableArrayList();
-                dataShow.setAll(data.stream().filter(organization -> organization.isTheSameBoss(org)).collect(Collectors.toList()));
-                dataView.setItems(dataShow);
-            } else {
-                showMessage("No selected item!");
-            }
-        });
-        Button showAll = new Button("Show all");
-        showAll.setFont(font);
-        showAll.setOnAction((ActionEvent e) -> dataView.setItems(data));
-        boxButtons.getChildren().addAll(filterBossName, showBossName, showAll);
-        return boxButtons;
-    }
 
     private void showMessage(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -231,11 +176,6 @@ public class Main extends Application {
 
     private MenuBar createMenu() {
         Menu addMenu = new Menu("Add");
-//        MenuItem edit = new MenuItem("Edit organization");
-//        editMenu.getItems().add(edit);
-//        edit.setOnAction((ActionEvent event) -> {
-//            handleButtonEdit();
-//        });
         MenuItem add = new MenuItem("Add location of user");
         addMenu.getItems().add(add);
         add.setOnAction((ActionEvent event) -> {
@@ -248,6 +188,16 @@ public class Main extends Application {
         showGraphic.setOnAction((ActionEvent event) -> {
             handleButtonShowGraphic();
         });
+        MenuItem showSortedPlaces = new MenuItem("Show a list of sorted places");
+        showMenu.getItems().add(showSortedPlaces);
+        showSortedPlaces.setOnAction((ActionEvent event) -> {
+            handleButtonShowSortedPlaces();
+        });
+        MenuItem showMap = new MenuItem("Show map of the selected user's locations");
+        showMenu.getItems().add(showMap);
+        showMap.setOnAction((ActionEvent event) -> {
+            handleButtonShowMap();
+        });
 
         Menu exitMenu = new Menu("Exit");
         MenuItem exitItem = new MenuItem("Exit");
@@ -257,14 +207,17 @@ public class Main extends Application {
         return new MenuBar(addMenu, showMenu, exitMenu);
     }
 
-    private void handleButtonEdit() {
-        Organization organization = dataView.getSelectionModel().getSelectedItem();
-        if (organization != null) {
-            DialogEditOrg orgEditDialog = new DialogEditOrg(organization);
-            data.sort((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
+    private void handleButtonShowMap() {
+        User currentUser = userView.getSelectionModel().getSelectedItem();
+        if (currentUser != null) {
+            MapWindow mapWindow = new MapWindow(currentUser);
         } else {
-            showMessage("No selected item!");
+            showMessage("No selected user!");
         }
+    }
+
+    private void handleButtonShowSortedPlaces() {
+        SortedPlacesWindow sortedPlacesWindow = new SortedPlacesWindow(places);
     }
 
     private void handleButtonShowGraphic() {
@@ -273,38 +226,6 @@ public class Main extends Application {
 
     private void handleButtonAdd() {
         DialogAddLocation addDialog = new DialogAddLocation(null, places, users);
-//        Organization organization = orgEditDialog.getOrg();
-//        if (organization != null) {
-//            data.add(organization);
-//            data.sort((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
-//        }
-    }
-
-    private void dataFilterView(ObservableList<Organization> dataFilter) {
-        Stage view = new Stage();
-        ListView<Organization> dataFilterView = new ListView<>(dataFilter);
-        dataFilterView.setStyle("-fx-font-size: 20px;");
-        Button ok = new Button("Ok");
-        ok.setOnAction(e -> view.close());
-        VBox root = new VBox();
-        root.setPadding(new Insets(10));
-        root.setSpacing(10);
-        root.setAlignment(Pos.CENTER);
-        root.getChildren().addAll(dataFilterView, ok);
-        view.setScene(new Scene(root, 200, 450));
-        view.show();
-    }
-
-    @Override
-    public void stop() {
-        try {
-            PrintWriter out = new PrintWriter("data.txt");
-            for (Organization org : data)
-                out.println(org.getName() + " " + org.getBossName() + " " + org.getPersonnel());
-            out.close();
-        } catch (IOException e) {
-            System.out.println("Error input data");
-        }
     }
 
     public static void main(String[] args) {

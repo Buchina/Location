@@ -24,7 +24,7 @@ public class ViewUser {
         pane = new StackPane();
         pane.setPadding(new Insets(5));
         Rectangle rect = new Rectangle(150, 120);
-        rect.setFill(Color.PEACHPUFF);
+        rect.setFill(Color.THISTLE);
         rect.setStrokeWidth(3);
         pane.getChildren().add(rect);
         Text textPet = new Text();
