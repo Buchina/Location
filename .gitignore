@@ -1,0 +1,12 @@
+.idea/*
+out/*
+lab_3.iml
+build/*
+.gradle/*
+gradle/*
+build.gradle
+data.txt
+gradlew
+gradlew.bat
+settings.gradle
+

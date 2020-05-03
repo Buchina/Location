@@ -1,0 +1,3 @@
+University 1 1 5 3
+House 3 5 8 7
+Park 10 2 13 4
