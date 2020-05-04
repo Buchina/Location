@@ -2,13 +2,12 @@ package listviewexample;
 
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -31,7 +30,7 @@ public class MapWindow {
         dialog = new Stage();
         dialog.initModality(Modality.APPLICATION_MODAL);
         dialog.setTitle("Map of user");
-        Scene scene = new Scene(root, 250, 250);
+        Scene scene = new Scene(root, 250, 200);
         dialog.setScene(scene);
         dialog.showAndWait();
     }
@@ -39,15 +38,12 @@ public class MapWindow {
     private void createMap() {
         Canvas canvas = new Canvas(100, 100);
         GraphicsContext gc = canvas.getGraphicsContext2D();
+        gc.setStroke(Color.VIOLET);
         gc.beginPath();
         gc.moveTo(Double.valueOf(user.getLocations().get(0).getX()), Double.valueOf(user.getLocations().get(0).getY()));
-//        gc.moveTo(30.5, 30.5);
-        for (int i = 1; i < user.getLocations().size() - 1; i++){
+        for (int i = 1; i < user.getLocations().size(); i++) {
             gc.lineTo(Double.valueOf(user.getLocations().get(i).getX()), Double.valueOf(user.getLocations().get(i).getY()));
         }
-        gc.lineTo(150.5, 30.5);
-//        gc.lineTo(150.5, 150.5);
-//        gc.lineTo(30.5, 30.5);
         gc.stroke();
         root.add(canvas, 0, 1);
     }
@@ -55,7 +51,7 @@ public class MapWindow {
     private void createButton() {
         Button btnCancel = new Button("Cancel");
         btnCancel.setFont(font);
-        root.add(btnCancel, 1, 6);
+        root.add(btnCancel, 0, 2);
         btnCancel.setOnAction((ActionEvent e) -> {
             user = null;
             dialog.close();

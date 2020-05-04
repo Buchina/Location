@@ -24,14 +24,11 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Main extends Application {
-
-    private ObservableList<Organization> data = FXCollections.observableArrayList();
     private ObservableList<User> users = FXCollections.observableArrayList();
     private List<Place> places = new ArrayList<>();
     private ListView<User> userView;
     private ViewUser view = new ViewUser();
     private Font font = Font.font(18);
-
 
     @Override
     public void init() {
@@ -46,7 +43,7 @@ public class Main extends Application {
                 String[] str = inPlace.nextLine().split(" +");
                 if (str.length != 5 || !str[1].matches("[0-9]+") || !str[2].matches("[0-9]+")  //сделать ограничение по координатам?
                         || !str[3].matches("[0-9]+") || !str[4].matches("[0-9]+")
-                        || str[1].equals(str[3]) || str[2].equals(4)) {
+                        || Integer.parseInt(str[1]) == Integer.parseInt(str[3]) || Integer.parseInt(str[2]) == Integer.parseInt(str[4])) {
                     try {
                         FileWriter errorOut = new FileWriter("error.txt", true);
                         errorOut.write("ERROR file: place.txt, string: " + line + "\n");
@@ -64,7 +61,10 @@ public class Main extends Application {
                 line++;
                 String[] str = inUser.nextLine().split(",");
                 if (str.length != 4 || !str[0].matches("(0[1-9]|[12][0-9]|3[01]|[1-9]).(0[1-9]|1[012]).([0-9][0-9]) ((0[1-9])|(2[0-4])|(1[0-9])|([1-9])):[0-5][0-9]") || !str[1].matches("[0-9]+")
-                        || !str[2].matches("[0-9]+") || !str[3].matches("[0-9]+")) {
+                        || !str[2].matches("[0-9]+") || !str[3].matches("[0-9]+")
+                        || Integer.parseInt(str[1]) < 0 || Integer.parseInt(str[1]) > 100
+                        || Integer.parseInt(str[2]) < 0 || Integer.parseInt(str[2]) > 100
+                        || Integer.parseInt(str[3]) < 0 || Integer.parseInt(str[3]) > 100) {
                     try {
                         FileWriter errorOut = new FileWriter("error.txt", true);
                         errorOut.write("ERROR file: user.txt, string: " + line + "\n");
@@ -73,10 +73,10 @@ public class Main extends Application {
                         System.out.println("Error with error.txt");
                     }
                 } else {
+                    boolean flagId = false;
+                    boolean flagPlace = false;
+                    boolean flagPlaceNull = false;
                     try {
-                        boolean flagId = false;
-                        boolean flagPlace = false;
-                        boolean flagPlaceNull = false;
                         DateFormat formatter = new SimpleDateFormat("d.MM.yy H:m");
                         Date date = (Date) formatter.parse(str[0]);
                         for (User j : users) {
@@ -136,11 +136,8 @@ public class Main extends Application {
             for (User i : users) {
                 i.sortLocations();
             }
-            System.out.println("Юзеры " + users.toString());
-            System.out.println("Места " + places.toString());
-
         } catch (IOException e) {
-            System.out.println("Error with init");  //????
+            System.out.println("Error with init");
         }
     }
 
@@ -150,7 +147,7 @@ public class Main extends Application {
         root.setCenter(createListViewUser());
         root.setRight(view.getPane());
         root.setTop(createMenu());
-        primaryStage.setTitle("List of users");
+        primaryStage.setTitle("List of users with a known last place");
         primaryStage.setScene(new Scene(root, 700, 600));
         primaryStage.show();
     }
@@ -210,22 +207,22 @@ public class Main extends Application {
     private void handleButtonShowMap() {
         User currentUser = userView.getSelectionModel().getSelectedItem();
         if (currentUser != null) {
-            MapWindow mapWindow = new MapWindow(currentUser);
+            new MapWindow(currentUser);
         } else {
             showMessage("No selected user!");
         }
     }
 
     private void handleButtonShowSortedPlaces() {
-        SortedPlacesWindow sortedPlacesWindow = new SortedPlacesWindow(places);
+        new SortedPlacesWindow(places);
     }
 
     private void handleButtonShowGraphic() {
-        DialogForGraphic graphicDialog = new DialogForGraphic(places);
+        new DialogForGraphic(places);
     }
 
     private void handleButtonAdd() {
-        DialogAddLocation addDialog = new DialogAddLocation(null, places, users);
+        new DialogAddLocation(null, places, users);
     }
 
     public static void main(String[] args) {

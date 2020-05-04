@@ -1,3 +1,5 @@
-University 1 1 5 3
-House 3 5 8 7
-Park 10 2 13 4
+University 2 2 20 14
+Park 12 18 22 28
+Theatre 32 6 46 28
+Gym 2 40 14 58
+Forest 60 60 100 100
